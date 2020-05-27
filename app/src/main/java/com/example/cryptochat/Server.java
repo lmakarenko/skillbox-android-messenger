@@ -71,7 +71,6 @@ public class Server {
                 Log.e("SERVER", "onError", ex);
             }
         };
-
         client.connect();
     }
 

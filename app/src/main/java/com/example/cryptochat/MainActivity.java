@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
         onlineCount.setText(Integer.toString(totalUsers));
     }
 
+    /**
+     * Уменьшает счетчик кол-ва пользователей на 1, устанавливает текст в счетчике интерфейса
+     */
     private void decUserCount() {
         totalUsers--;
         onlineCount.setText(Integer.toString(totalUsers));
@@ -118,9 +122,11 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        String text = String.format("%s подключился к чату", user.getName());// Формируем строку-сообщение для тоста
-                        Toast.makeText(MainActivity.this, text, Toast.LENGTH_LONG).show();// Выводим тост на экран
                         incUserCount();
+                        String text = String.format("%s подключился к чату", user.getName());// Формируем строку-сообщение для тоста
+                        Toast toast = Toast.makeText(MainActivity.this, text, Toast.LENGTH_LONG);
+                        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                        toast.show();// Выводим тост на экран
                     }
                 });
             }
