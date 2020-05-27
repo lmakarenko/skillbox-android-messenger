@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,6 +21,22 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView chatWindow;
     private MessageController controller;
     private Server server;
+
+    TextView onlineCount;
+    private static int totalUsers = 0;
+
+    /**
+     * Увеличивает счетчик кол-ва пользователей на 1, устанавливает текст в счетчике интерфейса
+     */
+    private void incUserCount() {
+        totalUsers++;
+        onlineCount.setText(Integer.toString(totalUsers));
+    }
+
+    private void decUserCount() {
+        totalUsers--;
+        onlineCount.setText(Integer.toString(totalUsers));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         builder.show();
+
+        onlineCount = findViewById(R.id.onlineCount);// Текстовый элемент с кол-вом пользвоателей онлайн
 
         chatWindow = findViewById(R.id.chatWindow);
 
@@ -90,6 +109,28 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         String text = String.format("From %s: %s", pair.first, pair.second);
                         Toast.makeText(MainActivity.this, text, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        }, new Consumer<Protocol.User>() { // Consumer для получени инфы о подключенном пользователе
+            @Override
+            public void accept(final Protocol.User user) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String text = String.format("%s подключился к чату", user.getName());// Формируем строку-сообщение для тоста
+                        Toast.makeText(MainActivity.this, text, Toast.LENGTH_LONG).show();// Выводим тост на экран
+                        incUserCount();
+                    }
+                });
+            }
+        }, new Consumer<Protocol.User>() { // Consumer для получени инфы об отключенном пользователе
+            @Override
+            public void accept(final Protocol.User user) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        decUserCount();
                     }
                 });
             }

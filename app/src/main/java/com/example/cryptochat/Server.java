@@ -16,22 +16,28 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Server {
 
-
-
     private WebSocketClient client;
     private Map<Long, String> names = new ConcurrentHashMap<>();
     private Consumer<Pair<String, String>> onMessageReceived;
     private Consumer<Pair<String, String>> onPrivateMessage;
+    private Consumer<Protocol.User> onUserConnected;
+    private Consumer<Protocol.User> onUserDisconnected;
 
-    public Server(Consumer<Pair<String, String>> onMessageReceived, Consumer<Pair<String, String>> onPrivateMessage) {
+    public Server(Consumer<Pair<String, String>> onMessageReceived,
+                  Consumer<Pair<String, String>> onPrivateMessage,
+                  Consumer<Protocol.User> onUserConnected,
+                  Consumer<Protocol.User> onUserDisconnected) {
         this.onMessageReceived = onMessageReceived;
         this.onPrivateMessage = onPrivateMessage;
+        this.onUserConnected = onUserConnected;// Consumer для отправки имени пользователя при его подключении
+        this.onUserDisconnected = onUserDisconnected;
     }
 
     public void connect() {
         URI addr = null;
         try {
-            addr = new URI("ws://35.210.129.230:8881");
+            //addr = new URI("ws://35.210.129.230:8881");
+            addr = new URI("ws://35.214.3.133:8881/");
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
@@ -105,9 +111,17 @@ public class Server {
     private void updateStatus(Protocol.UserStatus status) {
         Protocol.User u = status.getUser();
         if (status.isConnected()) {
-            names.put(u.getId(), u.getName());
+            String userName = u.getName();
+            Long userId = u.getId();
+            names.put(userId, userName);
+            onUserConnected.accept(// Отправляем инфу о том, что пользователь подключился
+                    u
+            );
         } else {
             names.remove(u.getId());
+            onUserDisconnected.accept(// Отправляем инфу о том, что пользователь отключился
+                    u
+            );
         }
     }
 

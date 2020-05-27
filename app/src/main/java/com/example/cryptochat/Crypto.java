@@ -23,17 +23,19 @@ public class Crypto {
         }
     }
     public static String encrypt(String text) throws Exception {
-        Cipher cipher = Cipher.getInstance("AES");
+        return text;
+        /*Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.ENCRYPT_MODE, keySpec);
         byte[] encrypted = cipher.doFinal(text.getBytes());
-        return Base64.encodeToString(encrypted, Base64.DEFAULT);
+        return Base64.encodeToString(encrypted, Base64.DEFAULT);*/
     }
 
     public static String decrypt(String encoded) throws Exception {
-        byte[] encrypted = Base64.decode(encoded, Base64.DEFAULT);
+        return encoded;
+        /*byte[] encrypted = Base64.decode(encoded, Base64.DEFAULT);
         Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.DECRYPT_MODE, keySpec);
         byte[] decrypted = cipher.doFinal(encrypted);
-        return new String(decrypted, "UTF-8");
+        return new String(decrypted, "UTF-8");*/
     }
 }
